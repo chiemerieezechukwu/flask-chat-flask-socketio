@@ -1,10 +1,12 @@
 from datetime import datetime
-from flask import render_template, flash, redirect, url_for, request, jsonify
-from flask_socketio import emit, disconnect
-from chezchat import socketio, app, db
-from chezchat.models import Room, History, Users, Notifications, RoomSchema, UsersSchema, HistorySchema
-from chezchat.forms import CreateRoomForm, UserRegistrationForm, LoginForm
-from flask_login import current_user, login_user, logout_user, login_required
+
+from flask import flash, jsonify, redirect, render_template, request, url_for
+from flask_login import current_user, login_required, login_user, logout_user
+from flask_socketio import disconnect, emit
+
+from chezchat import app, db, socketio
+from chezchat.forms import CreateRoomForm, LoginForm, UserRegistrationForm
+from chezchat.models import History, HistorySchema, Notifications, Room, RoomSchema, Users, UsersSchema
 
 sessionID = {}
 

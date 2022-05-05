@@ -136,7 +136,7 @@ resource "aws_ecs_service" "web-prod-ecs-service" {
   launch_type                        = "FARGATE"
 
   network_configuration {
-    subnets          = [aws_subnet.web-prod-subnet-private-1.id]
+    subnets          = aws_subnet.web-prod-subnet-private.*.id
     security_groups  = [aws_security_group.web-prod-ecs-sg.id]
     assign_public_ip = false
   }
@@ -145,5 +145,26 @@ resource "aws_ecs_service" "web-prod-ecs-service" {
     target_group_arn = aws_lb_target_group.web-prod-lb-tg.arn
     container_name   = local.nginx_container_name
     container_port   = 80
+  }
+}
+
+resource "aws_security_group" "web-prod-ecs-sg" {
+  name        = "web-prod-ecs-sg"
+  vpc_id      = aws_vpc.web-prod-vpc.id
+  description = "allow inbound access from the ALB only"
+
+  ingress {
+    protocol        = "tcp"
+    from_port       = 80
+    to_port         = 80
+    security_groups = [aws_security_group.web-prod-lb-sg.id]
+  }
+
+  egress {
+    protocol         = "-1"
+    from_port        = 0
+    to_port          = 0
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
   }
 }

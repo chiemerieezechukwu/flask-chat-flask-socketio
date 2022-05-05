@@ -1,6 +1,6 @@
 resource "aws_lb" "web-prod-lb" {
   name               = "web-prod-lb"
-  subnets            = [aws_subnet.web-prod-subnet-public-1.id, aws_subnet.web-prod-subnet-public-2.id, aws_subnet.web-prod-subnet-public-3.id]
+  subnets            = aws_subnet.web-prod-subnet-public.*.id
   load_balancer_type = "application"
   security_groups    = [aws_security_group.web-prod-lb-sg.id]
 }
@@ -31,5 +31,27 @@ resource "aws_lb_target_group" "web-prod-lb-tg" {
     timeout             = "5"
     path                = "/"
     unhealthy_threshold = "2"
+  }
+}
+
+resource "aws_security_group" "web-prod-lb-sg" {
+  name        = "web-prod-lb-sg"
+  vpc_id      = aws_vpc.web-prod-vpc.id
+  description = "controls access to the ALB"
+
+  ingress {
+    protocol         = "tcp"
+    from_port        = 80
+    to_port          = 80
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
+  egress {
+    protocol         = "-1"
+    from_port        = 0
+    to_port          = 0
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
   }
 }

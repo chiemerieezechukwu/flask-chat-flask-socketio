@@ -37,7 +37,7 @@ resource "aws_lb_target_group" "web-prod-lb-tg" {
 resource "aws_security_group" "web-prod-lb-sg" {
   name        = "web-prod-lb-sg"
   vpc_id      = aws_vpc.web-prod-vpc.id
-  description = "controls access to the ALB"
+  description = "allow access to the ALB from anywhere on the internet"
 
   ingress {
     protocol         = "tcp"

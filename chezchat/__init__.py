@@ -15,11 +15,7 @@ socketio = SocketIO(app, engineio_logger=True, logger=True, cors_allowed_origins
 
 manager = Manager(app)
 
-DATABASE_URL = "sqlite:///database.db"
-
-if os.environ.get("MEDIUM_DOCKER"):
-    # use postgres if running in docker
-    DATABASE_URL = os.environ.get("DATABASE_URL")
+DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///database.db")
 
 app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False

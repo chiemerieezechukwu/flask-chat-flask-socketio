@@ -56,7 +56,7 @@ jobs:
         id: plan
         run: |
           terraform plan \
-            -no-color -auto-approve
+            -no-color -auto-approve \
             -var="aws_region=$AWS_REGION"
         continue-on-error: true
 

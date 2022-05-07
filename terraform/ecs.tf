@@ -1,19 +1,9 @@
-resource "aws_ecr_repository" "web-prod-ecr-app-repo" {
-  name                 = local.ecr_app_repository_name
-  image_tag_mutability = "IMMUTABLE"
-
-  image_scanning_configuration {
-    scan_on_push = true
-  }
+data "aws_ecr_repository" "web-prod-ecr-app-repo" {
+  name = local.ecr_app_repository_name
 }
 
-resource "aws_ecr_repository" "web-prod-ecr-nginx-repo" {
-  name                 = local.ecr_nginx_repository_name
-  image_tag_mutability = "MUTABLE"
-
-  image_scanning_configuration {
-    scan_on_push = true
-  }
+data "aws_ecr_repository" "web-prod-ecr-nginx-repo" {
+  name = local.ecr_nginx_repository_name
 }
 
 resource "random_string" "SECRET_KEY" {
@@ -40,7 +30,7 @@ resource "aws_ecs_task_definition" "web-prod-task-definition" {
   container_definitions = jsonencode([
     {
       "name" : local.app_container_name,
-      "image" : "${aws_ecr_repository.web-prod-ecr-app-repo.repository_url}:${var.image_tag}",
+      "image" : "${data.aws_ecr_repository.web-prod-ecr-app-repo.repository_url}:${var.image_tag}",
       "cpu" : 256,
       "memory" : 512,
       "essential" : true,
@@ -84,7 +74,7 @@ resource "aws_ecs_task_definition" "web-prod-task-definition" {
     },
     {
       "name" : local.nginx_container_name,
-      "image" : "${aws_ecr_repository.web-prod-ecr-nginx-repo.repository_url}:latest",
+      "image" : "${data.aws_ecr_repository.web-prod-ecr-nginx-repo.repository_url}:latest",
       "cpu" : 256,
       "memory" : 512,
       "essential" : true,

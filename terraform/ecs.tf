@@ -46,10 +46,6 @@ resource "aws_ecs_task_definition" "web-prod-task-definition" {
       "essential" : true,
       "environment" : [
         {
-          "name" : "MEDIUM_CONTAINER",
-          "value" : "true"
-        },
-        {
           "name" : "POSTGRES_HOST",
           "value" : aws_db_instance.web-prod-db.address
         },

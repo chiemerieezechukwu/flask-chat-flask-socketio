@@ -18,6 +18,9 @@ jobs:
       id-token: write
       contents: read
       pull-requests: write
+    outputs:
+      ecr_app_repository: ${{ steps.terraform-outputs.outputs.ecr_app_repository }}
+      ecr_nginx_repository: ${{ steps.terraform-outputs.outputs.ecr_nginx_repository }}
     defaults:
       run:
         working-directory: .github/terraform-ecr/
@@ -41,7 +44,7 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME_ECR_CREATE }}
           role-duration-seconds: 900
           aws-region: ${{ env.AWS_REGION }}
 
@@ -73,6 +76,13 @@ jobs:
         run: |
           terraform apply -auto-approve -no-color \
             -var="aws_region=$AWS_REGION"
+
+      - name: Terraform Outputs
+        id: terraform-outputs
+        run: |
+          terraform output -no-color -json > outputs.json && \
+            echo "::set-output name=ecr_app_repository::$(cat outputs.json | jq .app_repository_name.value)" && \
+            echo "::set-output name=ecr_nginx_repository::$(cat outputs.json | jq .nginx_repository_name.value)"
 
       - name: Add PR comments
         uses: actions/github-script@v6
@@ -119,3 +129,48 @@ jobs:
               repo: context.repo.repo,
               body: output
             })
+
+
+  build-push-image:
+    name: Build and push image to AWS ECR
+    runs-on: ubuntu-latest
+    needs: provision-aws-ecr
+    env:
+      AWS_REGION: eu-central-1
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME_ECR_PUSH }}
+          role-duration-seconds: 900
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/ecr-login@v1
+
+      - name: Build, tag and push app image to ecr
+        id: build-push-app-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ needs.provision-aws-ecr.outputs.ecr_app_repository }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f ./Dockerfile.prod .
+
+      - name: Build, tag and push nginx image to ecr
+        id: build-push-nginx-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ needs.provision-aws-ecr.outputs.ecr_nginx_repository }}
+          IMAGE_TAG: latest
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f ./nginx/Dockerfile ./nginx
+
+      - name: Logout from Amazon ECR
+        if: always()
+        run: docker logout ${{ steps.login-ecr.outputs.registry }}

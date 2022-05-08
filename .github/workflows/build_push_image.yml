@@ -165,6 +165,8 @@ jobs:
           IMAGE_TAG: ${{ github.sha }}
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f ./Dockerfile.prod .
+          echo "Pushing app image to ECR"
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
       - name: Build, tag and push nginx image to ecr
         id: build-push-nginx-image
@@ -174,6 +176,8 @@ jobs:
           IMAGE_TAG: latest
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f ./nginx/Dockerfile ./nginx
+          echo "Pushing nginx image to ECR"
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
       - name: Logout from Amazon ECR
         if: always()

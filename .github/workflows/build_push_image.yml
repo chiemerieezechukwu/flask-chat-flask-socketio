@@ -7,6 +7,7 @@ on:
   release:
     types:
       - published
+  workflow_dispatch:
 
 
 jobs:
@@ -43,10 +44,10 @@ jobs:
           TF_STATE_OBJECT_KEY: ${{ secrets.AWS_TF_STATE_OBJECT_KEY }}
         run: |
           terraform init \
-            # -backend-config="bucket=$TF_STATE_BUCKET" \
-            # -backend-config="key=$TF_STATE_OBJECT_KEY" \
-            # -backend-config="region=$AWS_REGION" \
-            # -backend-config="encrypt=true"
+            -backend-config="bucket=$TF_STATE_BUCKET" \
+            -backend-config="key=$TF_STATE_OBJECT_KEY" \
+            -backend-config="region=$AWS_REGION" \
+            -backend-config="encrypt=true"
 
       - name: Validate Terraform
         id: validate

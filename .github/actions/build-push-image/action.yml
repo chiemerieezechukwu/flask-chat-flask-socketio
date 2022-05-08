@@ -8,21 +8,21 @@ inputs:
     required: true
   DOCKERFILE_PATH:
     required: true
-  DOCKER_CONTEXT:
+  DOCKER_BUILD_CONTEXT:
     required: true
 
 runs:
   using: composite
   steps:
     - name: Build, tag and push image to ecr
+      shell: bash
       env:
         ECR_REGISTRY: ${{ inputs.ECR_REGISTRY }}
         ECR_REPOSITORY: ${{ inputs.ECR_REPOSITORY }}
         IMAGE_TAG: ${{ inputs.IMAGE_TAG }}
         DOCKERFILE_PATH: ${{ inputs.DOCKERFILE_PATH }}
-        DOCKER_CONTEXT: ${{ inputs.DOCKER_CONTEXT }}
+        DOCKER_BUILD_CONTEXT: ${{ inputs.DOCKER_BUILD_CONTEXT }}
       run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f $DOCKERFILE_PATH $DOCKER_CONTEXT
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f $DOCKERFILE_PATH $DOCKER_BUILD_CONTEXT
         echo "Pushing app image to ECR"
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-      shell: bash

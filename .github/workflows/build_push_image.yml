@@ -37,6 +37,13 @@ jobs:
         run: terraform fmt -check
         continue-on-error: true
 
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          role-duration-seconds: 900
+          aws-region: ${{ env.AWS_REGION }}
+
       - name: Initialize Terraform
         id: init
         env:
@@ -119,10 +126,3 @@ jobs:
                 body: output
               })
             }
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
-          role-duration-seconds: 900
-          aws-region: ${{ env.AWS_REGION }}

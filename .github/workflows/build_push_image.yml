@@ -80,7 +80,7 @@ jobs:
       - name: Terraform Outputs
         id: terraform-outputs
         run: |
-            echo "::set-output name=ecr_app_repository::$(terraform output -no-color -json | jq -r .app_repository_name.value)" \
+            echo "::set-output name=ecr_app_repository::$(terraform output -no-color -json | jq -r .app_repository_name.value)" && \
             echo "::set-output name=ecr_nginx_repository::$(terraform output -no-color -json | jq -r .nginx_repository_name.value)"
 
       - run: echo ${{ steps.terraform-outputs.outputs.ecr_app_repository }}

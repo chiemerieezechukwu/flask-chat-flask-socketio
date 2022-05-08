@@ -37,3 +37,5 @@ terraform.rc
 
 # exclude backend configuration files likely to contain sensitive data
 *.tfbackend
+
+outputs.json

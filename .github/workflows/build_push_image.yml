@@ -17,7 +17,7 @@ jobs:
     permissions:
       id-token: write
       contents: read
-      issues: write
+      pull-requests: write
     defaults:
       run:
         working-directory: .github/terraform-ecr/
@@ -68,11 +68,17 @@ jobs:
             -var="aws_region=$AWS_REGION"
         continue-on-error: true
 
+      - name: Terraform Apply
+        id: apply
+        run: terraform apply -auto-approve -no-color
+        continue-on-error: true
+
       - name: Add PR comments
         uses: actions/github-script@v6
         if: github.event_name == 'pull_request'
         env:
           PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
+          APPLY: "terraform\n${{ steps.apply.outputs.stdout }}"
         with:
           script: |
             // 1. Retrieve existing bot comments for the PR
@@ -87,24 +93,31 @@ jobs:
 
             // 2. Prepare format of the comment
             const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
-            #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
-            #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
-            <details><summary>Validation Output</summary>
 
+            #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
+
+            #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
+            <details>
+            <summary>Validation Output</summary>
             \`\`\`\n
             ${{ steps.validate.outputs.stdout }}
             \`\`\`
-
             </details>
 
             #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
-            
-            <details><summary>Show Plan</summary>
-            
+            <details>
+            <summary>Show Plan</summary>
             \`\`\`\n
             ${process.env.PLAN}
             \`\`\`
-            
+            </details>
+
+            #### Terraform Apply 🚀\`${{ steps.apply.outcome }}\`
+            <details>
+            <summary>Show Apply</summary>
+            \`\`\`\n
+            ${process.env.APPLY}
+            \`\`\`
             </details>
             
             *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Working Directory: \`${{ env.tf_actions_working_dir }}\`, Workflow: \`${{ github.workflow }}\`*`;

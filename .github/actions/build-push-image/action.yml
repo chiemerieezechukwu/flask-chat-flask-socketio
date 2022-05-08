@@ -28,8 +28,8 @@ runs:
         DOCKERFILE_PATH: ${{ inputs.DOCKERFILE_PATH }}
         DOCKER_CONTEXT: ${{ inputs.DOCKER_CONTEXT }}
       run: |
+        ls -la
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f $DOCKERFILE_PATH $DOCKER_CONTEXT
         echo "Pushing app image to ECR"
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-        ls -la
       shell: bash

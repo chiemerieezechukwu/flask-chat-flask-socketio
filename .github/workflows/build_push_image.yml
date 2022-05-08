@@ -134,6 +134,9 @@ jobs:
   build-push-image:
     name: Build and push image to AWS ECR
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     needs: provision-aws-ecr
     env:
       AWS_REGION: eu-central-1

@@ -179,26 +179,21 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1
 
       - name: Build, tag and push app image to ecr
-        id: build-push-app-image
-        env:
+        uses: ./.github/actions/build-push-image
+        with:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ${{ needs.provision-aws-ecr.outputs.ecr_app_repository }}
           IMAGE_TAG: ${{ github.sha }}
-        run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f ./Dockerfile.prod .
-          echo "Pushing app image to ECR"
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          DOCKERFILE_PATH: ./Dockerfile.prod
+          DOCKER_CONTEXT: .
 
       - name: Build, tag and push nginx image to ecr
-        id: build-push-nginx-image
-        env:
+        with:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ${{ needs.provision-aws-ecr.outputs.ecr_nginx_repository }}
           IMAGE_TAG: latest
-        run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f ./nginx/Dockerfile ./nginx
-          echo "Pushing nginx image to ECR"
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          DOCKERFILE_PATH: ./Dockerfile.nginx
+          DOCKER_CONTEXT: ./nginx
 
       - name: Logout from Amazon ECR
         if: always()

@@ -178,14 +178,14 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
-      # - name: Build, tag and push app image to ecr
-      #   uses: ./.github/actions/build-push-image
-      #   with:
-      #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-      #     ECR_REPOSITORY: ${{ needs.provision-aws-ecr.outputs.ecr_app_repository }}
-      #     IMAGE_TAG: ${{ github.sha }}
-      #     DOCKERFILE_PATH: ./Dockerfile.prod
-      #     DOCKER_CONTEXT: .
+      - name: Build, tag and push app image to ecr
+        uses: ./.github/actions/build-push-image
+        with:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ needs.provision-aws-ecr.outputs.ecr_app_repository }}
+          IMAGE_TAG: ${{ github.sha }}
+          DOCKERFILE_PATH: ./Dockerfile.prod
+          DOCKER_CONTEXT: .
 
       - name: Build, tag and push nginx image to ecr
         uses: ./.github/actions/build-push-image

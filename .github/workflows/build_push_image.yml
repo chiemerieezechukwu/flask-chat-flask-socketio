@@ -84,6 +84,8 @@ jobs:
             echo "::set-output name=ecr_app_repository::$(cat outputs.json | jq -r .app_repository_name.value)" && \
             echo "::set-output name=ecr_nginx_repository::$(cat outputs.json | jq -r .nginx_repository_name.value)" && \
             cat outputs.json
+            jq --version
+
 
       - name: Add PR comments
         uses: actions/github-script@v6

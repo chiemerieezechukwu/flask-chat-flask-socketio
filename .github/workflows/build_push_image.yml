@@ -73,7 +73,6 @@ jobs:
         run: |
           terraform apply -auto-approve -no-color \
             -var="aws_region=$AWS_REGION"
-        continue-on-error: true
 
       - name: Add PR comments
         uses: actions/github-script@v6

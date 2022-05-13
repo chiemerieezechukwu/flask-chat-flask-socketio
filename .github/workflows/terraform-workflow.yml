@@ -8,8 +8,10 @@ on:
     inputs:
       AWS_REGION:
         required: true
+        type: string
       TERRAFORM_ROOT_PATH:
         required: true
+        type: string
     secrets:
       AWS_ROLE_TO_ASSUME:
         required: true
@@ -87,7 +89,10 @@ jobs:
 
       - name: Terraform Output
         id: terraform-output
-        run: echo "::set-output name=terraform_output::$(terraform-bin output -no-color -json)"
+        run:  |
+          TF_OUTPUT=$(terraform-bin output -no-color -json | jq tostring)
+          echo "::add-mask::$TF_OUTPUT"
+          echo "::set-output name=terraform_output::$TF_OUTPUT"
 
       - name: Add PR comments
         uses: actions/github-script@v6

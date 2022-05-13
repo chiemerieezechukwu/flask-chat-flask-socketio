@@ -47,12 +47,15 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
+      - name: Remove later
+        run: echo ${{ needs.provision-aws-ecr.outputs.terraform_output }}
+
       - name: Set terraform output
         id: set-terraform-output
         run: |
-          echo ${{ needs.provision-aws-ecr.outputs.terraform_output }} > terraform_output.json && \
-          echo "::set-output name=ecr_app_repository::$(cat terraform_output.json | jq -r .app_repository_name.value)" && \
-          echo "::set-output name=ecr_nginx_repository::$(cat terraform_output.json | jq -r .nginx_repository_name.value)"
+          echo ${{ needs.provision-aws-ecr.outputs.terraform_output }} > terraform_output && \
+          echo "::set-output name=ecr_app_repository::$(cat terraform_output | jq -r .app_repository_name.value)" && \
+          echo "::set-output name=ecr_nginx_repository::$(cat terraform_output | jq -r .nginx_repository_name.value)"
 
       - name: Build, tag and push app image to ecr
         uses: ./.github/actions/build-push-image

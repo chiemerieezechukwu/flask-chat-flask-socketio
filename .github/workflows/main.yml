@@ -47,12 +47,18 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
+      - name: Set terraform output
+        id: set-terraform-output
+        run: |
+          echo ${{ needs.provision-aws-ecr.outputs.terraform_output }} > terraform_output.json && \
+          echo "::set-output name=ecr_app_repository::$(cat terraform_output.json | jq -r .app_repository_name.value)" && \
+          echo "::set-output name=ecr_nginx_repository::$(cat terraform_output.json | jq -r .nginx_repository_name.value)"
+
       - name: Build, tag and push app image to ecr
         uses: ./.github/actions/build-push-image
-        run: echo ${{ needs.provision-aws-ecr.outputs.terraform_output }}
         with:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: ${{ needs.provision-aws-ecr.outputs.terraform_output }}
+          ECR_REPOSITORY: ${{ steps.set-terraform-output.outputs.ecr_app_repository }}
           IMAGE_TAG: ${{ github.event.pull_request.head.sha }}
           DOCKERFILE_PATH: ./Dockerfile.prod
           DOCKER_BUILD_CONTEXT: .
@@ -61,7 +67,7 @@ jobs:
         uses: ./.github/actions/build-push-image
         with:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: ${{ needs.provision-aws-ecr.outputs.terraform_output }}
+          ECR_REPOSITORY: ${{ steps.set-terraform-output.outputs.ecr_nginx_repository }}
           IMAGE_TAG: latest
           DOCKERFILE_PATH: ./nginx/Dockerfile
           DOCKER_BUILD_CONTEXT: ./nginx

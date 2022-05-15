@@ -1,7 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import PasswordField, StringField, SubmitField
-from wtforms.validators import DataRequired, EqualTo, Length, ValidationError
-
+from wtforms import StringField, PasswordField, SubmitField
+from wtforms.validators import ValidationError, DataRequired, EqualTo, Length
 from chezchat.models import Users
 
 

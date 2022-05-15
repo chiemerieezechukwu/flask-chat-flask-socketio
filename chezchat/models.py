@@ -1,9 +1,7 @@
 from datetime import datetime
-
+from werkzeug.security import generate_password_hash, check_password_hash
+from chezchat import db, ma, login
 from flask_login import UserMixin
-from werkzeug.security import check_password_hash, generate_password_hash
-
-from chezchat import db, login, ma
 
 room_members = db.Table(
     "room_members",

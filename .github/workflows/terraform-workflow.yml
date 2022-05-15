@@ -22,6 +22,10 @@ on:
         required: true
       AWS_TF_STATE_OBJECT_KEY:
         required: true
+      TF_VAR_DB_USERNAME:
+        required: false
+      TF_VAR_DB_PASSWORD:
+        required: false
 
 
 jobs:
@@ -83,8 +87,8 @@ jobs:
       - name: Terraform Plan
         id: plan
         env:
-          TF_VAR_db_username: ${{ secrets.TF_VAR_db_username }}
-          TF_VAR_db_password: ${{ secrets.TF_VAR_db_password }}
+          TF_VAR_db_username: ${{ secrets.TF_VAR_DB_USERNAME }}
+          TF_VAR_db_password: ${{ secrets.TF_VAR_DB_PASSWORD }}
           TF_VAR_image_tag: ${{ github.event.pull_request.head.sha }}
         run: |
           terraform plan -no-color
@@ -93,8 +97,8 @@ jobs:
       - name: Terraform Apply
         id: apply
         env:
-          TF_VAR_db_username: ${{ secrets.TF_VAR_db_username }}
-          TF_VAR_db_password: ${{ secrets.TF_VAR_db_password }}
+          TF_VAR_db_username: ${{ secrets.TF_VAR_DB_USERNAME }}
+          TF_VAR_db_password: ${{ secrets.TF_VAR_DB_PASSWORD }}
           TF_VAR_image_tag: ${{ github.event.pull_request.head.sha }}
         run: |
           terraform apply -auto-approve -no-color
@@ -109,7 +113,7 @@ jobs:
         id: environment-url
         if: ${{ inputs.ENVIRONMENT }}
         run: |
-          echo "::set-output name=environment_url::$(echo ${{ steps.terraform-output.outputs.terraform_output }} | jq -r .alb_app_dns.value)"
+          echo "::set-output name=environment_url::http://$(echo ${{ steps.terraform-output.outputs.terraform_output }} | jq -r .alb_app_dns.value)"
 
       - name: Add PR comments
         uses: actions/github-script@v6

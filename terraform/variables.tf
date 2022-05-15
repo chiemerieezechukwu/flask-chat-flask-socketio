@@ -20,7 +20,7 @@ variable "db_password" {
 
 variable "db_name" {
   type    = string
-  default = "web-prod-database"
+  default = "webproddatabase"
 }
 
 variable "image_tag" {

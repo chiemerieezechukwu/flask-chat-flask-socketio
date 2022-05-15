@@ -82,16 +82,20 @@ jobs:
 
       - name: Terraform Plan
         id: plan
+        env:
+          TF_VAR_amap: ${{ secrets.TF_VAR_amap }}
+          TF_VAR_image_tag: ${{ github.event.pull_request.head.sha }}
         run: |
-          terraform plan -no-color \
-            -var="aws_region=$AWS_REGION"
+          terraform plan -no-color
         continue-on-error: true
 
       - name: Terraform Apply
         id: apply
+        env:
+          TF_VAR_amap: ${{ secrets.TF_VAR_amap }}
+          TF_VAR_image_tag: ${{ github.event.pull_request.head.sha }}
         run: |
-          terraform apply -auto-approve -no-color \
-            -var="aws_region=$AWS_REGION"
+          terraform apply -auto-approve -no-color
 
       - name: Terraform Output
         id: terraform-output

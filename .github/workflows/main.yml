@@ -16,7 +16,7 @@ jobs:
     uses: ./.github/workflows/terraform-workflow.yml
     with:
       AWS_REGION: eu-central-1
-      TERRAFORM_ROOT_PATH: .github/terraform-ecr/
+      TERRAFORM_ROOT_PATH: ./.github/terraform-ecr/
     secrets:
       AWS_ROLE_TO_ASSUME: ${{ secrets.AWS_ROLE_TO_ASSUME_ECR_CREATE }}
       AWS_TF_STATE_BUCKET: ${{ secrets.AWS_TF_STATE_BUCKET }}
@@ -47,9 +47,6 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Remove later
-        run: echo ${{ needs.provision-aws-ecr.outputs.terraform_output }}
-
       - name: Set terraform output
         id: set-terraform-output
         run: |
@@ -79,7 +76,14 @@ jobs:
         if: always()
         run: docker logout ${{ steps.login-ecr.outputs.registry }}
 
-  # deploy-update-app:
-  #   name: Deploy or update app
-  #   uses: ./.github/workflows/deploy-ecs.yml
-  #   # make terraform stack reusable
+  provision-aws-ecs:
+    name: Provision AWS ECS with terraform
+    uses: ./.github/workflows/terraform-workflow.yml
+    needs: build-push-image
+    with:
+      AWS_REGION: eu-central-1
+      TERRAFORM_ROOT_PATH: ./terraform/
+    secrets:
+      AWS_ROLE_TO_ASSUME: ${{ secrets.AWS_ROLE_TO_ASSUME_ECS }}
+      AWS_TF_STATE_BUCKET: ${{ secrets.AWS_TF_STATE_BUCKET }}
+      AWS_TF_STATE_OBJECT_KEY: ${{ secrets.AWS_TF_STATE_OBJECT_KEY }}

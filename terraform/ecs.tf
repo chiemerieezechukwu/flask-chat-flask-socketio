@@ -6,7 +6,7 @@ data "aws_ecr_repository" "web-prod-ecr-nginx-repo" {
   name = local.ecr_nginx_repository_name
 }
 
-resource "random_string" "SECRET_KEY" {
+resource "random_password" "SECRET_KEY" {
   length  = 128
   special = false
 }
@@ -49,7 +49,7 @@ resource "aws_ecs_task_definition" "web-prod-task-definition" {
         },
         {
           "name" : "SECRET_KEY",
-          "valueFrom" : random_string.SECRET_KEY.result
+          "valueFrom" : random_password.SECRET_KEY.result
         }
       ],
       "logConfiguration" : {

@@ -15,9 +15,6 @@ on:
       ENVIRONMENT:
         required: false
         type: string
-      ENVIRONMENT_URL:
-        required: false
-        type: string
     secrets:
       AWS_ROLE_TO_ASSUME:
         required: true
@@ -37,7 +34,7 @@ jobs:
       pull-requests: write
     environment:
       name: ${{ inputs.ENVIRONMENT }}
-      url: elb-url-here
+      url: ${{ steps.environment-url.outputs.environment_url }}
     outputs: 
       terraform_output: ${{ steps.terraform-output.outputs.terraform_output }}
     defaults:
@@ -101,6 +98,12 @@ jobs:
         run:  |
           TF_OUTPUT=$(terraform-bin output -no-color -json | jq tostring)
           echo "::set-output name=terraform_output::$TF_OUTPUT"
+
+      - name: Enironment URL
+        id: environment-url
+        if: ${{ inputs.ENVIRONMENT }}
+        run: |
+          echo "::set-output name=environment_url::$(echo ${{ steps.terraform-output.outputs.terraform_output }} | jq -r .alb_app_dns.value)"
 
       - name: Add PR comments
         uses: actions/github-script@v6

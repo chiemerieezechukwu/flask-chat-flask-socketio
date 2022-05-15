@@ -59,7 +59,7 @@ jobs:
         with:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ${{ steps.set-terraform-output.outputs.ecr_app_repository }}
-          IMAGE_TAG: ${{ github.event.pull_request.head.sha || github.event.release.tag_name }}
+          IMAGE_TAG: ${{ github.event.release.tag_name || github.event.pull_request.head.sha }}
           DOCKERFILE_PATH: ./Dockerfile.prod
           DOCKER_BUILD_CONTEXT: .
 

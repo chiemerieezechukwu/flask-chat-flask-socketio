@@ -1,9 +1,11 @@
-import os
-import environ
-from datetime import datetime
-from chezchat import app, socketio, manager, db, inspector
-from chezchat.models import Users
 import logging
+import os
+from datetime import datetime
+
+import environ
+
+from chezchat import app, db, inspector, manager, socketio
+from chezchat.models import Users
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)

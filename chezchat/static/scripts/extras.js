@@ -148,16 +148,18 @@ function processJoinRoom(data, element) {
 
   var groupMarkerSpan = createElement("span", { class: "group-marker" });
   groupMarkerSpan.innerHTML = "group";
-
+  
   var timeSpan = createElement("span", { class: "time-info" });
-  timeSpan.innerHTML = checkDate(data.room_last_message.timestamp);
+  var lastMessageSpan = createElement("span", { class: "lastMessage msg" });
+
+  if (Object.keys(data.room_last_message).length !== 0) {
+    lastMessageSpan.innerHTML = `${data.room_last_message.author}: ${data.room_last_message.messages}`;
+    timeSpan.innerHTML = checkDate(data.room_last_message.timestamp);
+  }
 
   appendChildren(div2, [nameSpan, groupMarkerSpan, timeSpan]);
 
   var div3 = createElement("div", { class: "roomDivInfo" });
-
-  var lastMessageSpan = createElement("span", { class: "lastMessage msg" });
-  lastMessageSpan.innerHTML = `${data.room_last_message.author}: ${data.room_last_message.messages}`;
 
   var lastMessageTypingSpan = createElement("span", { class: "lastMessage typing group", hidden: true });
 

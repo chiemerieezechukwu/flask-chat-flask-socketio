@@ -8,7 +8,14 @@ on:
     types:
       - published
   workflow_dispatch:
+    inputs:
+      IMAGE_TAG:
+        description: "Tag of the image to be pushed to AWS ECR"
+        required: true
+        type: string
 
+env:
+  APP_IMAGE_TAG: ${{ github.event.release.tag_name || github.event.pull_request.head.sha || inputs.IMAGE_TAG }}
 
 jobs:
   provision-aws-ecr:
@@ -59,7 +66,7 @@ jobs:
         with:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ${{ steps.set-terraform-output.outputs.ecr_app_repository }}
-          IMAGE_TAG: ${{ github.event.release.tag_name || github.event.pull_request.head.sha || "latest" }}
+          IMAGE_TAG: ${{ env.APP_IMAGE_TAG }}
           DOCKERFILE_PATH: ./Dockerfile.prod
           DOCKER_BUILD_CONTEXT: .
 
@@ -83,6 +90,7 @@ jobs:
     with:
       AWS_REGION: eu-central-1
       TERRAFORM_ROOT_PATH: ./terraform/
+      APP_IMAGE_TAG: ${{ env.APP_IMAGE_TAG }}
       ENVIRONMENT: aws
     secrets:
       AWS_ROLE_TO_ASSUME: ${{ secrets.AWS_ROLE_TO_ASSUME_ECS }}

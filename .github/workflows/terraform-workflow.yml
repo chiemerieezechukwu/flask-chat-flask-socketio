@@ -15,6 +15,9 @@ on:
       ENVIRONMENT:
         required: false
         type: string
+      APP_IMAGE_TAG:
+        required: false
+        type: string
     secrets:
       AWS_ROLE_TO_ASSUME:
         required: true
@@ -46,6 +49,7 @@ jobs:
         working-directory: ${{ inputs.TERRAFORM_ROOT_PATH }}
     env:
       AWS_REGION: ${{ inputs.AWS_REGION }}
+      APP_IMAGE_TAG: ${{ inputs.APP_IMAGE_TAG }}
 
     steps:
       - name: Checkout repository
@@ -89,7 +93,7 @@ jobs:
         env:
           TF_VAR_db_username: ${{ secrets.TF_VAR_DB_USERNAME }}
           TF_VAR_db_password: ${{ secrets.TF_VAR_DB_PASSWORD }}
-          TF_VAR_image_tag: ${{ github.event.release.tag_name || github.event.pull_request.head.sha }}
+          TF_VAR_image_tag: ${{ env.APP_IMAGE_TAG }}
         run: |
           terraform plan -no-color
         continue-on-error: true
@@ -99,7 +103,7 @@ jobs:
         env:
           TF_VAR_db_username: ${{ secrets.TF_VAR_DB_USERNAME }}
           TF_VAR_db_password: ${{ secrets.TF_VAR_DB_PASSWORD }}
-          TF_VAR_image_tag: ${{ github.event.release.tag_name || github.event.pull_request.head.sha }}
+          TF_VAR_image_tag: ${{ env.APP_IMAGE_TAG }}
         run: |
           terraform apply -auto-approve -no-color
 

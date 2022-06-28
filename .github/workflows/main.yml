@@ -3,7 +3,7 @@ name: Provision AWS ECR, build and push image to AWS ECR
 on:
   pull_request:
     branches:
-      - develop
+      - master
   release:
     types:
       - published

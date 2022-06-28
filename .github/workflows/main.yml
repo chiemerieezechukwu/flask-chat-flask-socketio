@@ -14,9 +14,6 @@ on:
         required: true
         type: string
 
-env:
-  APP_IMAGE_TAG: ${{ github.event.release.tag_name || github.event.pull_request.head.sha || inputs.IMAGE_TAG }}
-
 jobs:
   provision-aws-ecr:
     name: Provision AWS ECR with terraform
@@ -38,8 +35,16 @@ jobs:
     needs: provision-aws-ecr
     env:
       AWS_REGION: eu-central-1
+      APP_IMAGE_TAG: ${{ github.event.release.tag_name || github.event.pull_request.head.sha || inputs.IMAGE_TAG }}
+    outputs:
+      image_tag: ${{ steps.set-image-tag-output.outputs.image_tag }}
 
     steps:
+      - name: set image_tag output
+        id: set-image-tag-output
+        run: |
+          echo "::set-output name=image_tag::${{ env.APP_IMAGE_TAG }}"
+
       - name: Checkout repository
         uses: actions/checkout@v3
 
@@ -90,7 +95,7 @@ jobs:
     with:
       AWS_REGION: eu-central-1
       TERRAFORM_ROOT_PATH: ./terraform/
-      APP_IMAGE_TAG: ${{ env.APP_IMAGE_TAG }}
+      APP_IMAGE_TAG: ${{ needs.build-push-image.outputs.image_tag }}
       ENVIRONMENT: aws
     secrets:
       AWS_ROLE_TO_ASSUME: ${{ secrets.AWS_ROLE_TO_ASSUME_ECS }}

@@ -3,12 +3,16 @@ name: Provision AWS ECR, build and push image to AWS ECR
 on:
   pull_request:
     branches:
-      - develop
+      - master
   release:
     types:
       - published
   workflow_dispatch:
-
+    inputs:
+      IMAGE_TAG:
+        description: "Tag of the image to be pushed to AWS ECR"
+        required: true
+        type: string
 
 jobs:
   provision-aws-ecr:
@@ -31,8 +35,16 @@ jobs:
     needs: provision-aws-ecr
     env:
       AWS_REGION: eu-central-1
+      APP_IMAGE_TAG: ${{ github.event.release.tag_name || github.event.pull_request.head.sha || inputs.IMAGE_TAG }}
+    outputs:
+      image_tag: ${{ steps.set-image-tag-output.outputs.image_tag }}
 
     steps:
+      - name: set image_tag output
+        id: set-image-tag-output
+        run: |
+          echo "::set-output name=image_tag::${{ env.APP_IMAGE_TAG }}"
+
       - name: Checkout repository
         uses: actions/checkout@v3
 
@@ -59,7 +71,7 @@ jobs:
         with:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ${{ steps.set-terraform-output.outputs.ecr_app_repository }}
-          IMAGE_TAG: ${{ github.event.release.tag_name || github.event.pull_request.head.sha }}
+          IMAGE_TAG: ${{ env.APP_IMAGE_TAG }}
           DOCKERFILE_PATH: ./Dockerfile.prod
           DOCKER_BUILD_CONTEXT: .
 
@@ -83,6 +95,7 @@ jobs:
     with:
       AWS_REGION: eu-central-1
       TERRAFORM_ROOT_PATH: ./terraform/
+      APP_IMAGE_TAG: ${{ needs.build-push-image.outputs.image_tag }}
       ENVIRONMENT: aws
     secrets:
       AWS_ROLE_TO_ASSUME: ${{ secrets.AWS_ROLE_TO_ASSUME_ECS }}

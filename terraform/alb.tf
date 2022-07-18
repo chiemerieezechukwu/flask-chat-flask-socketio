@@ -9,6 +9,17 @@ resource "aws_lb" "web-prod-lb" {
   security_groups    = [aws_security_group.web-prod-lb-sg.id]
 }
 
+resource "aws_lb_listener" "web-prod-lb-http-forward" {
+  load_balancer_arn = aws_lb.web-prod-lb.arn
+  port              = 80
+  protocol          = "HTTP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.web-prod-lb-tg.arn
+  }
+}
+
 resource "aws_lb_listener" "web-prod-lb-https-forward" {
   load_balancer_arn = aws_lb.web-prod-lb.arn
   port              = 443

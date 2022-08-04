@@ -113,7 +113,7 @@ jobs:
           TF_OUTPUT=$(terraform-bin output -no-color -json | jq tostring)
           echo "::set-output name=terraform_output::$TF_OUTPUT"
 
-      - name: Enironment URL
+      - name: Environment URL
         id: environment-url
         if: ${{ inputs.ENVIRONMENT }}
         run: |

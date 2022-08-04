@@ -21,10 +21,7 @@ jobs:
     with:
       AWS_REGION: eu-central-1
       TERRAFORM_ROOT_PATH: ./.github/terraform-ecr/
-    secrets:
-      AWS_ROLE_TO_ASSUME: ${{ secrets.AWS_ROLE_TO_ASSUME_ECR_CREATE }}
-      AWS_TF_STATE_BUCKET: ${{ secrets.AWS_TF_STATE_BUCKET }}
-      AWS_TF_STATE_OBJECT_KEY: ${{ secrets.AWS_TF_STATE_OBJECT_KEY }}
+    secrets: inherit
 
   build-push-image:
     name: Build and push image to AWS ECR
@@ -97,9 +94,4 @@ jobs:
       TERRAFORM_ROOT_PATH: ./terraform/
       APP_IMAGE_TAG: ${{ needs.build-push-image.outputs.image_tag }}
       ENVIRONMENT: aws
-    secrets:
-      AWS_ROLE_TO_ASSUME: ${{ secrets.AWS_ROLE_TO_ASSUME_ECS }}
-      AWS_TF_STATE_BUCKET: ${{ secrets.AWS_TF_STATE_BUCKET }}
-      AWS_TF_STATE_OBJECT_KEY: ${{ secrets.AWS_TF_STATE_OBJECT_KEY }}
-      TF_VAR_DB_USERNAME: ${{ secrets.TF_VAR_DB_USERNAME }}
-      TF_VAR_DB_PASSWORD: ${{ secrets.TF_VAR_DB_PASSWORD }}
+    secrets: inherit

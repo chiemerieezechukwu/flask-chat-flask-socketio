@@ -18,18 +18,17 @@ def home():
     non_friend_users = []
     all_users = Users.query.all()
     all_rooms = Room.query.outerjoin(History).order_by(History.timestamp.desc().nullslast())
-    current_user_rooms = current_user.room_subscribed
+    current_user_rooms = current_user.room_subscribed.outerjoin(History).order_by(History.timestamp.desc().nullslast())
     rooms_ordered = []
     room_params = []
     notification_counts = []
-    for room in all_rooms:
-        if room in current_user_rooms:
-            last_message_params = room.room_history.order_by(None).order_by(History.timestamp.desc()).first()
-            room_notification_count = persistentNotifications(room.room_id)
-            rooms_ordered.append(room)
-            room_params.append(last_message_params)
-            notification_counts.append(room_notification_count)
-            print(room_notification_count)
+    for room in current_user_rooms:
+        last_message_params = room.room_history.order_by(None).order_by(History.timestamp.desc()).first()
+        room_notification_count = persistentNotifications(room.room_id)
+        rooms_ordered.append(room)
+        room_params.append(last_message_params)
+        notification_counts.append(room_notification_count)
+        print(room_notification_count)
     rooms = zip(rooms_ordered, room_params, notification_counts)
 
     # find users not in current_user's friend's list

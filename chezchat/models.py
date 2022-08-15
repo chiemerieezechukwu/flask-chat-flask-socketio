@@ -23,7 +23,7 @@ class Users(UserMixin, db.Model):
     user_history = db.relationship("History", backref="user_history", lazy="dynamic")
     room_created = db.relationship("Room", backref="room_created", lazy="dynamic")
     room_subscribed = db.relationship(
-        "Room", secondary=room_members, backref=db.backref("subscribers", lazy="dynamic")
+        "Room", secondary=room_members, backref=db.backref("subscribers", lazy="dynamic"), lazy="dynamic"
     )
 
     def set_password(self, password):

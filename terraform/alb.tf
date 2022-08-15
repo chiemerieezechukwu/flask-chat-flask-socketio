@@ -1,3 +1,7 @@
+data "aws_acm_certificate" "certificate" {
+  domain = "chiemerie.com"
+}
+
 resource "aws_lb" "web-prod-lb" {
   name               = "web-prod-lb"
   subnets            = aws_subnet.web-prod-subnet-public.*.id
@@ -10,6 +14,19 @@ resource "aws_lb_listener" "web-prod-lb-http-forward" {
   port              = 80
   protocol          = "HTTP"
 
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.web-prod-lb-tg.arn
+  }
+}
+
+resource "aws_lb_listener" "web-prod-lb-https-forward" {
+  load_balancer_arn = aws_lb.web-prod-lb.arn
+  port              = 443
+  protocol          = "HTTPS"
+
+  ssl_policy      = "ELBSecurityPolicy-2015-05"
+  certificate_arn = data.aws_acm_certificate.certificate.arn
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.web-prod-lb-tg.arn
@@ -43,6 +60,14 @@ resource "aws_security_group" "web-prod-lb-sg" {
     protocol         = "tcp"
     from_port        = 80
     to_port          = 80
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
+  ingress {
+    protocol         = "tcp"
+    from_port        = 443
+    to_port          = 443
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }

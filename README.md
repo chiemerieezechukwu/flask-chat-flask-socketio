@@ -19,5 +19,5 @@ from the root folder run
 docker-compose up
 ```
 
-## Heroku
-There's a deployment on Heroku currently at: https://flask-chatrrr.herokuapp.com/
+## Render
+There's a deployment on Render currently at: https://flask-chatrrr.onrender.com/

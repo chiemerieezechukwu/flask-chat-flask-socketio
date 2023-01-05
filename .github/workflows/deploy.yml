@@ -17,6 +17,10 @@ env:
 jobs:
   terraform-apply:
     environment: deploy-aws
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
     runs-on: ubuntu-latest
     name: Terraform apply
     steps:

@@ -1,0 +1,63 @@
+name: Terraform Pull Request Workflow
+
+on:
+  pull_request:
+    branches:
+      - main
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  terraform-validate:
+    runs-on: ubuntu-latest
+    name: Validate terraform configuration
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: terraform validate
+        uses: dflook/terraform-validate@v1
+        with:
+          path: terraform
+
+  terraform-fmt-check:
+    runs-on: ubuntu-latest
+    name: Check formatting of terraform files
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: terraform fmt
+        uses: dflook/terraform-fmt-check@v1
+        with:
+          path: terraform
+
+  terraform-plan:
+    environment: deploy-aws
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
+    runs-on: ubuntu-latest
+    name: Terraform plan
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          role-duration-seconds: 900
+          aws-region: eu-central-1
+
+      - name: terraform plan
+        uses: dflook/terraform-plan@v1
+        with:
+          path: terraform
+          backend_config: |
+            bucket=${{ secrets.AWS_TF_STATE_BUCKET }}
+            key=${{ secrets.AWS_TF_STATE_OBJECT_KEY }}
+            region=${{ env.AWS_REGION }}
+            encrypt=true

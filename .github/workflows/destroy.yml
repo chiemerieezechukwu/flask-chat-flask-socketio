@@ -1,0 +1,34 @@
+name: Cleanup
+
+on:
+  workflow_dispatch:
+
+jobs:
+  terraform-destroy:
+    environment: deploy-aws
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
+    runs-on: ubuntu-latest
+    name: Terraform destroy
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          role-duration-seconds: 900
+          aws-region: eu-central-1
+
+      - name: terraform destroy
+        uses: dflook/terraform-destroy@v1
+        with:
+          path: terraform
+          backend_config: |
+            bucket=${{ secrets.AWS_TF_STATE_BUCKET }}
+            key=${{ secrets.AWS_TF_STATE_OBJECT_KEY }}
+            region=${{ env.AWS_REGION }}
+            encrypt=true

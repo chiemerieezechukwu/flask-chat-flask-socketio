@@ -31,6 +31,7 @@ jobs:
           path: terraform
 
   terraform-plan:
+    environment: deploy-aws
     runs-on: ubuntu-latest
     name: Terraform plan
     steps:

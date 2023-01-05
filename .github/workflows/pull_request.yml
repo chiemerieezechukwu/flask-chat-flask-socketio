@@ -5,6 +5,9 @@ on:
     branches:
       - main
 
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 jobs:
   terraform-validate:
     runs-on: ubuntu-latest

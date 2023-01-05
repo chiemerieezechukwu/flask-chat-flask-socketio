@@ -1,3 +1,9 @@
+resource "random_password" "password" {
+  length           = 64
+  special          = true
+  override_special = "!#$%&*()-_=+[]{}<>:?"
+}
+
 resource "aws_db_instance" "web-prod-db" {
   allocated_storage       = 20
   engine                  = "postgres"
@@ -10,7 +16,7 @@ resource "aws_db_instance" "web-prod-db" {
   storage_type            = "gp2"
   db_name                 = var.db_name
   username                = var.db_username
-  password                = var.db_password
+  password                = random_password.password.result
   skip_final_snapshot     = true
 }
 

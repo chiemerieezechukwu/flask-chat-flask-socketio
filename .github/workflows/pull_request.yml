@@ -61,7 +61,3 @@ jobs:
             key=${{ secrets.AWS_TF_STATE_OBJECT_KEY }}
             region=${{ env.AWS_REGION }}
             encrypt=true
-          variables: |
-            db_username = "${{ secrets.TF_VAR_DB_USERNAME }}"
-            db_password = "${{ secrets.TF_VAR_DB_PASSWORD }}"
-            image_tag = "${{ env.APP_IMAGE_TAG }}"

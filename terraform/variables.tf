@@ -12,10 +12,7 @@ variable "suffix" {
 
 variable "db_username" {
   type = string
-}
-
-variable "db_password" {
-  type = string
+  default = "flask_db"
 }
 
 variable "db_name" {
@@ -25,6 +22,7 @@ variable "db_name" {
 
 variable "image_tag" {
   description = "Corresponds to a git tag."
+  default = "latest"
 }
 
 output "app_repository_name" {

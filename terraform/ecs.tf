@@ -37,7 +37,7 @@ resource "aws_ecs_task_definition" "web-prod-task-definition" {
         },
         {
           "name" : "DATABASE_URL",
-          "value" : "postgresql://${var.db_username}:${var.db_password}@${aws_db_instance.web-prod-db.endpoint}/${var.db_name}"
+          "value" : "postgresql://${var.db_username}:${random_password.password.result}@${aws_db_instance.web-prod-db.endpoint}/${var.db_name}"
         },
         {
           "name" : "SECRET_KEY",

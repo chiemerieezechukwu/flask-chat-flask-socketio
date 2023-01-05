@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/chiemerieezechukwu/flask-chat-flask-socketio/compare/v1.2.0...v1.2.1) (2023-01-05)
+
+
+### Fix
+
+* Trigger release ([595bac1](https://github.com/chiemerieezechukwu/flask-chat-flask-socketio/commit/595bac147100d2b9bfbad6595c32d3a04717b9e2))
+
 # [1.2.0](https://github.com/chiemerieezechukwu/flask-chat-flask-socketio/compare/v1.1.1...v1.2.0) (2023-01-05)
 
 

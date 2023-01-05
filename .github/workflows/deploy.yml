@@ -44,7 +44,7 @@ jobs:
             region=${{ env.AWS_REGION }}
             encrypt=true
           variables: |
-            image_tag=${{ env.image_tag }}
+            image_tag="${{ env.image_tag }}"
           auto_approve: true
 
   build-push-image:

@@ -1,11 +1,3 @@
-data "aws_ecr_repository" "web-prod-ecr-app-repo" {
-  name = local.ecr_app_repository_name
-}
-
-data "aws_ecr_repository" "web-prod-ecr-nginx-repo" {
-  name = local.ecr_nginx_repository_name
-}
-
 resource "random_password" "SECRET_KEY" {
   length  = 128
   special = false
@@ -30,7 +22,7 @@ resource "aws_ecs_task_definition" "web-prod-task-definition" {
   container_definitions = jsonencode([
     {
       "name" : local.app_container_name,
-      "image" : "${data.aws_ecr_repository.web-prod-ecr-app-repo.repository_url}:${var.image_tag}",
+      "image" : "${aws_ecr_repository.ecr-app-repo.repository_url}:${var.image_tag}",
       "cpu" : 256,
       "memory" : 512,
       "essential" : true,
@@ -74,7 +66,7 @@ resource "aws_ecs_task_definition" "web-prod-task-definition" {
     },
     {
       "name" : local.nginx_container_name,
-      "image" : "${data.aws_ecr_repository.web-prod-ecr-nginx-repo.repository_url}:latest",
+      "image" : "${aws_ecr_repository.ecr-nginx-repo.repository_url}:latest",
       "cpu" : 256,
       "memory" : 512,
       "essential" : true,

@@ -1,3 +1,10 @@
+## [1.2.3](https://github.com/chiemerieezechukwu/flask-chat-flask-socketio/compare/v1.2.2...v1.2.3) (2023-01-05)
+
+
+### Fix
+
+* string ([7f429c8](https://github.com/chiemerieezechukwu/flask-chat-flask-socketio/commit/7f429c83fe01d399f238820fe1a2cd12e9133e37))
+
 ## [1.2.2](https://github.com/chiemerieezechukwu/flask-chat-flask-socketio/compare/v1.2.1...v1.2.2) (2023-01-05)
 
 

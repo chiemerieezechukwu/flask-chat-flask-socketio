@@ -53,7 +53,7 @@ jobs:
         uses: dflook/terraform-plan@v1
         with:
           path: terraform
-          backend-config: |
+          backend_config: |
             bucket=${{ secrets.AWS_TF_STATE_BUCKET }}
             key=${{ secrets.AWS_TF_STATE_OBJECT_KEY }}
             region=${{ env.AWS_REGION }}

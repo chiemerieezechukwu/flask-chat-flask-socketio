@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Validate terraform configuration
     steps:
-      - name: Checkout
+      - name: checkout
         uses: actions/checkout@v3
 
       - name: terraform validate
@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Check formatting of terraform files
     steps:
-      - name: Checkout
+      - name: checkout
         uses: actions/checkout@v3
 
       - name: terraform fmt
@@ -42,10 +42,10 @@ jobs:
     runs-on: ubuntu-latest
     name: Terraform plan
     steps:
-      - name: Checkout
+      - name: checkout
         uses: actions/checkout@v3
 
-      - name: Configure AWS Credentials
+      - name: configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}

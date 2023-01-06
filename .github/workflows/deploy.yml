@@ -52,7 +52,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: deploy-aws
-      url: chatrrr.chiemerie.com
+      url: https://chatrrr.chiemerie.com
     permissions:
       id-token: write
       contents: read

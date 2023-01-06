@@ -1,3 +1,10 @@
+## [1.2.6](https://github.com/chiemerieezechukwu/flask-chat-flask-socketio/compare/v1.2.5...v1.2.6) (2023-01-06)
+
+
+### Fix
+
+* correct url ([d80bede](https://github.com/chiemerieezechukwu/flask-chat-flask-socketio/commit/d80bede213bc53a83783e0e45cc34f2182ab8d5d))
+
 ## [1.2.5](https://github.com/chiemerieezechukwu/flask-chat-flask-socketio/compare/v1.2.4...v1.2.5) (2023-01-06)
 
 

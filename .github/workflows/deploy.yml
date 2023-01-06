@@ -77,6 +77,11 @@ jobs:
         id: tf-outputs
         with:
           path: terraform
+          backend_config: |
+            bucket=${{ secrets.AWS_TF_STATE_BUCKET }}
+            key=${{ secrets.AWS_TF_STATE_OBJECT_KEY }}
+            region=${{ env.AWS_REGION }}
+            encrypt=true
 
       - name: Build, tag and push app image to ecr
         uses: ./.github/actions/build-push-image

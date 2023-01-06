@@ -1,3 +1,10 @@
+## [1.2.5](https://github.com/chiemerieezechukwu/flask-chat-flask-socketio/compare/v1.2.4...v1.2.5) (2023-01-06)
+
+
+### Fix
+
+* workflow ([41e0dc3](https://github.com/chiemerieezechukwu/flask-chat-flask-socketio/commit/41e0dc3c0e6b3443ac1047c7987742c987904026))
+
 ## [1.2.4](https://github.com/chiemerieezechukwu/flask-chat-flask-socketio/compare/v1.2.3...v1.2.4) (2023-01-05)
 
 
